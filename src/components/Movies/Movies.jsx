@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { fetchFilms } from 'components/js/fetchFilms';
+import { fetchFilmsByQuery } from 'api-service/fetchFilms';
 import { FilmCard } from 'components/FilmCard/FilmCard';
 import {
   List,
@@ -27,9 +27,14 @@ const Movies = () => {
   useEffect(() => {
     if (!searchQuery) return;
     setStatus('pending');
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=d6e97164aaa08d2091b81af2621a507c&language=en-US&query=${searchQuery}&page=1&include_adult=false`;
-    fetchFilms(url, setFilms, setStatus);
-    setStatus('resolved');
+
+    fetchFilmsByQuery(searchQuery)
+      .then(r => {
+        if (r.data.total_results === 0) setStatus('no-results');
+        setFilms(r.filmsArr);
+        setStatus('resolved');
+      })
+      .catch(e => console.log(e.message));
   }, [searchQuery]);
 
   const formSubmit = e => {

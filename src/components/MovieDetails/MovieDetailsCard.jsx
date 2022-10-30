@@ -1,5 +1,6 @@
 import { Descr, Poster, Wrapper } from './MovieDetails.styled';
 import PropTypes from 'prop-types';
+import noFilm from 'images/noPoster.jpg';
 
 export const MovieDetailsCard = ({
   poster_path,
@@ -9,12 +10,12 @@ export const MovieDetailsCard = ({
   overview,
   genres,
 }) => {
-  const imgSrc = 'https://image.tmdb.org/t/p/w500/';
+  const imgSrc = `https://image.tmdb.org/t/p/w500/${poster_path}`;
   return (
     <Wrapper>
       <Poster>
         <img
-          src={imgSrc + poster_path ?? 'none'}
+          src={poster_path ? imgSrc : noFilm}
           alt={original_title}
           width="360"
         />
@@ -43,7 +44,7 @@ export const MovieDetailsCard = ({
 };
 
 MovieDetailsCard.propTypes = {
-  poster_path: PropTypes.string.isRequired,
+  poster_path: PropTypes.string,
   original_title: PropTypes.string.isRequired,
   release_date: PropTypes.string.isRequired,
   vote_average: PropTypes.number.isRequired,

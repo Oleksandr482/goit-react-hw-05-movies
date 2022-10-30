@@ -2,7 +2,7 @@ import { Wrapper } from 'components/MovieDetails/MovieDetails.styled';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchFilms } from '../js/fetchFilms';
+import { fetchFilmReviews } from 'api-service/fetchFilms';
 import { Paragraf } from './Reviews.styled';
 
 const Reviews = () => {
@@ -11,9 +11,9 @@ const Reviews = () => {
 
   useEffect(() => {
     if (!movieId) return;
-
-    const url = `https://api.themoviedb.org/3/movie/${movieId}/reviews?api_key=d6e97164aaa08d2091b81af2621a507c&language=en-US&page=1`;
-    fetchFilms(url, setReviews);
+    fetchFilmReviews(movieId)
+      .then(setReviews)
+      .catch(e => console.log(e.message));
   }, [movieId]);
 
   return (

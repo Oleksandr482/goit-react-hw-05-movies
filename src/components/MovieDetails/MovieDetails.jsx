@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { LinkBtn, Wrapper } from './MovieDetails.styled';
 import { MovieDetailsCard } from './MovieDetailsCard';
-import axios from 'axios';
+import { fetchFilmDetails } from 'api-service/fetchFilms';
 import { Container } from 'components/Movies/Movies.styled';
 
 const MovieDetails = () => {
@@ -14,11 +14,9 @@ const MovieDetails = () => {
   useEffect(() => {
     if (!movieId) return;
 
-    async function fetchFilm(url, setState) {
-      try {
-        const resp = await axios.get(url);
-        const filmsArr = await resp.data;
-        const {
+    fetchFilmDetails(movieId)
+      .then(
+        ({
           id,
           poster_path,
           original_title,
@@ -26,24 +24,19 @@ const MovieDetails = () => {
           vote_average,
           overview,
           genres,
-        } = await filmsArr;
-
-        await setState({
-          id,
-          poster_path,
-          original_title,
-          release_date,
-          vote_average,
-          overview,
-          genres,
-        });
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
-
-    const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=d6e97164aaa08d2091b81af2621a507c&language=en-US`;
-    fetchFilm(url, setFilm);
+        }) => {
+          setFilm({
+            id,
+            poster_path,
+            original_title,
+            release_date,
+            vote_average,
+            overview,
+            genres,
+          });
+        }
+      )
+      .catch(e => console.log(e.message));
   }, [movieId]);
 
   const {
@@ -62,7 +55,7 @@ const MovieDetails = () => {
 
       {film.id && (
         <MovieDetailsCard
-          poster_path={poster_path ?? 'none'}
+          poster_path={poster_path}
           original_title={original_title ?? 'none'}
           release_date={release_date}
           vote_average={vote_average ?? 0}
